@@ -42,7 +42,7 @@ ENV LC_ALL en_US.UTF-8
 
 ENV RVM_PATH /usr/local/rvm
 ENV RVM ${RVM_PATH}/bin/rvm
-ENV RVM_RUBY ruby-2.2.6
+ENV RVM_RUBY ruby-2.2.7
 RUN gpg --keyserver hkp://keys.gnupg.net --recv-keys D39DC0E3 \
   && (\curl -ksSL https://get.rvm.io | bash -s stable)
 RUN $RVM install $RVM_RUBY
