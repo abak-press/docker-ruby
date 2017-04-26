@@ -8,6 +8,7 @@ RUN apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys B97B0AFCAA1A4
     make \
     gcc \
     g++ \
+    libjemalloc-dev \
     curl \
     less \
     libxml2-dev \
@@ -45,7 +46,7 @@ ENV RVM ${RVM_PATH}/bin/rvm
 ENV RVM_RUBY ruby-2.2.7
 RUN gpg --keyserver hkp://keys.gnupg.net --recv-keys D39DC0E3 \
   && (\curl -ksSL https://get.rvm.io | bash -s stable)
-RUN $RVM install $RVM_RUBY
+RUN $RVM install $RVM_RUBY -C --with-jemalloc
 ENV GEM_HOME /gems
 ENV GEM_PATH ${GEM_HOME}
 ENV PATH ${RVM_PATH}/rubies/${RVM_RUBY}/bin:${GEM_HOME}/bin:$PATH
