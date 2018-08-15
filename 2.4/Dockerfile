@@ -35,6 +35,9 @@ RUN apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys B97B0AFCAA1A4
     build-essential \
     yarn \
     vim \
+    wget \
+    ca-certificates \
+  && update-ca-certificates \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
   && truncate -s 0 /var/log/*log
@@ -63,9 +66,22 @@ RUN echo 'gem: --no-rdoc --no-ri --no-document' > /root/.gemrc \
   && ssh-keyscan -H github.com >> /etc/ssh/ssh_known_hosts \
   && gem update --system 2.6.1 \
   && gem install bundler --version 1.15.1 \
+  && gem install executable-hooks -v ">=1.3.2" \
+  && gem regenerate_binstubs \
   && bundle config --global jobs 7 \
   && bundle config git.allow_insecure true \
   && bundle config --global build.nokogiri --use-system-libraries
+
+# Install Phantomjs
+ENV PHANTOMJS_VERSION 2.1.1
+ENV PHANTOMJS_PLATFORM linux-x86_64
+ENV PHANTOMJS_HOME /root/.phantomjs/${PHANTOMJS_VERSION}/${PHANTOMJS_PLATFORM}/bin
+
+RUN cd /tmp && wget -O phantomjs.tar.bz2 https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-${PHANTOMJS_VERSION}-${PHANTOMJS_PLATFORM}.tar.bz2 \
+  && tar -xjf phantomjs.tar.bz2 \
+  && mkdir -p "$PHANTOMJS_HOME" \
+  && cp phantomjs-${PHANTOMJS_VERSION}-${PHANTOMJS_PLATFORM}/bin/phantomjs "$PHANTOMJS_HOME" \
+  && rm -rf /tmp/phantomjs*
 
 ENV TINI_VERSION v0.18.0
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
