@@ -35,6 +35,7 @@ RUN apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys B97B0AFCAA1A4
     build-essential \
     yarn \
     vim \
+    gnupg2 \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
   && truncate -s 0 /var/log/*log
@@ -50,7 +51,7 @@ ENV LC_ALL en_US.UTF-8
 ENV RVM_PATH /usr/local/rvm
 ENV RVM ${RVM_PATH}/bin/rvm
 ENV RVM_RUBY ruby-2.2.7
-RUN gpg --keyserver hkp://keys.gnupg.net --recv-keys D39DC0E3 \
+RUN gpg2 --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB \
   && (\curl -ksSL https://get.rvm.io | bash -s stable)
 RUN $RVM install $RVM_RUBY
 ENV GEM_HOME /gems
