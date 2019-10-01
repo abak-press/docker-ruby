@@ -1,0 +1,5 @@
+test:
+  host: redis.dev
+  port: 6379
+  namespace: dk_ci
+  driver: hiredis
