@@ -1,0 +1,18 @@
+test:
+  remote: false
+
+  address: localhost
+  port: 9312
+  mysql41: 9308
+  listen_all_interfaces: true
+
+  max_matches: 5000
+  version: 2.1.2
+  mem_limit: 512M
+  write_buffer: 4M
+  attr_flush_period: 900
+  read_buffer: 1M
+  workers: threads
+
+  binlog_path: ''
+  query_log_file: /dev/null

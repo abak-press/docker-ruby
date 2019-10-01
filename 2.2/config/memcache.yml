@@ -1,0 +1,5 @@
+test:
+  servers: cache.dev
+  namespace: dk_ci
+  autofix_keys: true
+  compress: true

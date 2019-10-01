@@ -1,0 +1,16 @@
+redis:
+  host: redis.dev
+  port: 6379
+  namespace: dk_resque_ci
+  driver: hiredis
+
+resque:
+  interval: 1
+  verbosity: 1
+  log_file: "log/resque.log"
+  root: /home/dk/current
+
+workers:
+  '*':
+    count: 1
+    stop_timeout: 2700
