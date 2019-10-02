@@ -53,7 +53,8 @@ RUN apt-get install -y -q libxslt-dev libxml2-dev &&\
     apt-get install -y -q catdoc &&\
     apt-get install -y -q enca &&\
     apt-get install -y -q libmysqlclient-dev &&\
-    apt-get install -y -q libpq-dev
+    apt-get install -y -q libpq-dev &&\
+    apt-get install -y -q nodejs
 
 # dnsmasq
 RUN apt-get install -y -q dnsmasq-base dnsutils &&\

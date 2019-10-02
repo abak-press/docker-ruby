@@ -1,9 +1,0 @@
-test: &TEST_DB_DEFAULTS
-  adapter: postgresql
-  database: dk_ci<%= ENV['TEST_DATABASE_POSTFIX'] %>
-  username: docker
-  host: db.dev
-  min_messages: warning
-
-test_stat:
-  <<: *TEST_DB_DEFAULTS
