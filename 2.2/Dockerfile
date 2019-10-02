@@ -97,10 +97,13 @@ RUN apt-get -y install redis-server &&\
 
 # memcached
 RUN apt-get -y install memcached &&\
-    echo "/etc/init.d/memcached start" >> /root/init
+    echo "/etc/init.d/memcached start" >> /root/init &&\
+    mkdir -p /root/db/structure
 
 # Project DB
-ADD db/structure/ /root/db/structure/
+COPY db/structure/dk_ci.sql /root/db/structure/dk_ci.sql
+COPY db/structure/migrations_data.sql /root/db/structure/migrations_data.sql
+COPY db/structure/table_partitions_data.sql /root/db/structure/table_partitions_data.sql
 RUN /etc/init.d/postgresql start &&\
     apt-get -y -q install sudo &&\
     while ps aux | grep "postgres: [s]tartup process" > /dev/null; do sleep 1;done &&\
