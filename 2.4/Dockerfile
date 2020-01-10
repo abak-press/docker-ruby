@@ -16,6 +16,7 @@ RUN apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys B97B0AFCAA1A4
     less \
     libxml2-dev \
     libxslt-dev \
+    libssl-dev \
     pkg-config \
     libcurl3-dev \
     libpq-dev \
@@ -73,6 +74,16 @@ RUN echo 'gem: --no-rdoc --no-ri --no-document' > /root/.gemrc \
 ENV TINI_VERSION v0.18.0
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
 RUN chmod +x /tini
+
+ENV EXCEL2CSV_VERSION v0.1.4
+ENV LIBXL_VERSION 3.8.8.2
+RUN set -ex; \
+  curl -o /tmp/libxl-$LIBXL_VERSION.tar.gz https://www.libxl.com/download/libxl-lin-$LIBXL_VERSION.tar.gz; \
+  tar -xzf /tmp/libxl-$LIBXL_VERSION.tar.gz -C /tmp; \
+  cp /tmp/libxl-$LIBXL_VERSION/lib64/libxl.so /usr/lib; \
+  rm -rf /tmp/libxl-$LIBXL_VERSION.tar.gz /tmp/libxl-$LIBXL_VERSION;
+
+ADD excel2csv /usr/bin
 
 ENTRYPOINT ["/tini", "--"]
 
