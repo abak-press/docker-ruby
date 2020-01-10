@@ -64,6 +64,7 @@ ENV BUNDLE_SILENCE_ROOT_WARNING 1
 RUN echo 'gem: --no-rdoc --no-ri --no-document' > /root/.gemrc \
   && ssh-keyscan -H github.com >> /etc/ssh/ssh_known_hosts \
   && gem update --system \
+  && rm /usr/local/rvm/rubies/ruby-2.3.7/lib/ruby/gems/2.3.0/specifications/default/bundler*.gemspec \
   && gem install bundler --version 1.17.3 \
   && gem install executable-hooks -v ">=1.3.2" \
   && gem regenerate_binstubs \
