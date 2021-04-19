@@ -1,12 +1,13 @@
-FROM ubuntu:trusty
+FROM ubuntu:xenial
 
 RUN apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8 \
-  && echo 'deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main' 9.6 > /etc/apt/sources.list.d/pgdg.list \
+  && echo 'deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main' 9.6 > /etc/apt/sources.list.d/pgdg.list \
   && apt-key adv --keyserver keyserver.ubuntu.com --recv 68576280 \
-  && echo 'deb http://deb.nodesource.com/node_8.x trusty main' > /etc/apt/sources.list.d/nodesource.list \
+  && echo 'deb http://deb.nodesource.com/node_8.x xenial main' > /etc/apt/sources.list.d/nodesource.list \
   && apt-key adv --keyserver keyserver.ubuntu.com --recv 46C2130DFD2497F5 \
   && echo 'deb http://dl.yarnpkg.com/debian/ stable main' > /etc/apt/sources.list.d/yarn.list \
   && apt-get update -qq \
+  && apt-get upgrade -yq \
   && DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends \
     locales \
     make \
@@ -37,6 +38,8 @@ RUN apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys B97B0AFCAA1A4
     yarn \
     vim \
     gnupg2 \
+    tzdata \
+    dirmngr \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
   && truncate -s 0 /var/log/*log
@@ -68,6 +71,13 @@ RUN echo 'gem: --no-rdoc --no-ri --no-document' > /root/.gemrc \
   && bundle config --global jobs 7 \
   && bundle config git.allow_insecure true \
   && bundle config --global build.nokogiri --use-system-libraries
+
+RUN set -eux; \
+  \
+echo "\
+0	string		\<svg			SVG Scalable Vector Graphics image\n\
+!:mime	image/svg\n\
+" >> /etc/magic
 
 ENV TINI_VERSION v0.18.0
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
