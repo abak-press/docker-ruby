@@ -51,7 +51,7 @@ ENV LC_ALL en_US.UTF-8
 
 ENV RVM_PATH /usr/local/rvm
 ENV RVM ${RVM_PATH}/bin/rvm
-ENV RVM_RUBY ruby-2.4.6
+ENV RVM_RUBY ruby-2.4.10
 RUN gpg2 --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB \
   && (\curl -ksSL https://get.rvm.io | bash -s stable)
 RUN $RVM install $RVM_RUBY
@@ -63,7 +63,7 @@ ENV BUNDLE_SILENCE_ROOT_WARNING 1
 # https://github.com/bundler/bundler/issues/4402
 RUN echo 'gem: --no-rdoc --no-ri --no-document' > /root/.gemrc \
   && ssh-keyscan -H github.com >> /etc/ssh/ssh_known_hosts \
-  && gem install bundler \
+  && gem install bundler --version 1.17.3 \
   && gem install executable-hooks -v ">=1.3.2" \
   && gem regenerate_binstubs \
   && bundle config --global jobs 7 \
