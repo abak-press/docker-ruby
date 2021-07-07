@@ -2,10 +2,6 @@ FROM ubuntu:trusty
 
 RUN apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8 \
   && echo 'deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main' 9.6 > /etc/apt/sources.list.d/pgdg.list \
-  && apt-key adv --keyserver keyserver.ubuntu.com --recv 68576280 \
-  && echo 'deb http://deb.nodesource.com/node_8.x trusty main' > /etc/apt/sources.list.d/nodesource.list \
-  && apt-key adv --keyserver keyserver.ubuntu.com --recv 46C2130DFD2497F5 \
-  && echo 'deb http://dl.yarnpkg.com/debian/ stable main' > /etc/apt/sources.list.d/yarn.list \
   && apt-get update -qq \
   && DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends \
     locales \
@@ -32,14 +28,15 @@ RUN apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys B97B0AFCAA1A4
     enca \
     ca-certificates \
     libmysqlclient-dev \
-    nodejs \
     build-essential \
-    yarn \
     vim \
     gnupg2 \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
   && truncate -s 0 /var/log/*log
+
+RUN curl -fsSL https://deb.nodesource.com/setup_14.x | bash - ;\
+  apt-get install -y nodejs;
 
 RUN echo "Asia/Yekaterinburg" > /etc/timezone \
   && dpkg-reconfigure -f noninteractive tzdata \
