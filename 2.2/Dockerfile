@@ -1,9 +1,6 @@
-FROM ubuntu:xenial
+FROM ruby:2.2.7-jessie
 
-RUN apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8 \
-  && echo 'deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main' 9.6 > /etc/apt/sources.list.d/pgdg.list \
-  && apt-get update -qq \
-  && apt-get upgrade -yq \
+RUN apt-get update -qq \
   && DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends \
     locales \
     make \
@@ -16,9 +13,7 @@ RUN apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys B97B0AFCAA1A4
     libxslt-dev \
     pkg-config \
     libcurl3-dev \
-    libpq-dev \
     libgmp3-dev \
-    postgresql-client-9.6 \
     git-core \
     ssh \
     libmagickcore-dev \
@@ -28,36 +23,34 @@ RUN apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys B97B0AFCAA1A4
     catdoc \
     enca \
     ca-certificates \
+    apt-transport-https \
     libmysqlclient-dev \
     build-essential \
     vim \
     gnupg2 \
     tzdata \
     dirmngr \
+  && curl -L https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
+  && echo "deb https://apt-archive.postgresql.org/pub/repos/apt jessie-pgdg main 9.6" > /etc/apt/sources.list.d/pgdg.list \
+  && apt-get update -qq \
+  && DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends \
+    postgresql-client-9.6 \
+    libpq-dev \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
   && truncate -s 0 /var/log/*log
 
-RUN curl -fsSL https://deb.nodesource.com/setup_14.x | bash - ;\
+RUN curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add - \
+  && curl -fsSL https://deb.nodesource.com/setup_14.x | bash - ;\
   apt-get install -y nodejs;
 
 RUN echo "Asia/Yekaterinburg" > /etc/timezone \
   && dpkg-reconfigure -f noninteractive tzdata \
-  && locale-gen en_US.UTF-8 \
-  && dpkg-reconfigure --frontend=noninteractive locales \
-  && update-locale LANG=en_US.UTF-8
+  && locale-gen "en_US.UTF-8" \
+  && dpkg-reconfigure --frontend=noninteractive locales
+
 ENV LANG en_US.UTF-8
 ENV LC_ALL en_US.UTF-8
-
-ENV RVM_PATH /usr/local/rvm
-ENV RVM ${RVM_PATH}/bin/rvm
-ENV RVM_RUBY ruby-2.2.7
-RUN gpg2 --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB \
-  && (\curl -ksSL https://get.rvm.io | bash -s stable)
-RUN $RVM install $RVM_RUBY
-ENV GEM_HOME /gems
-ENV GEM_PATH ${GEM_HOME}
-ENV PATH ${RVM_PATH}/rubies/${RVM_RUBY}/bin:${GEM_HOME}/bin:$PATH
 ENV BUNDLE_SILENCE_ROOT_WARNING 1
 
 # https://github.com/bundler/bundler/issues/4402
