@@ -1,6 +1,5 @@
 FROM ruby:2.5-stretch
 
-
 RUN apt-get update -qq \
   && DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends \
     locales \
@@ -38,6 +37,7 @@ RUN echo "Asia/Yekaterinburg" > /etc/timezone \
   && dpkg-reconfigure --frontend=noninteractive locales
 
 ENV LANG en_US.UTF-8
+ENV LC_ALL en_US.UTF-8
 ENV BUNDLE_SILENCE_ROOT_WARNING 1
 
 RUN echo 'gem: --no-rdoc --no-ri --no-document' > /root/.gemrc \
