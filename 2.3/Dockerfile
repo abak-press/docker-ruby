@@ -30,6 +30,7 @@ RUN apt-get update -qq \
     gnupg2 \
     tzdata \
     dirmngr \
+    netcat \
   && curl -L https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
   && echo "deb https://apt-archive.postgresql.org/pub/repos/apt jessie-pgdg main 11" > /etc/apt/sources.list.d/pgdg.list \
   && apt-get update -qq \

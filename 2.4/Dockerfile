@@ -31,6 +31,7 @@ RUN curl -L https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
     build-essential \
     vim \
     gnupg2 \
+    netcat \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
   && truncate -s 0 /var/log/*log
