@@ -37,15 +37,16 @@ RUN curl -L https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
   && truncate -s 0 /var/log/*log
 
 RUN curl -fsSL https://deb.nodesource.com/setup_14.x | bash - ;\
-  apt-get install -y nodejs;
+  apt-get install -y nodejs && \
+  npm install -g yarn
 
-RUN echo "Asia/Yekaterinburg" > /etc/timezone \
+RUN ln -sf /usr/share/zoneinfo/Asia/Yekaterinburg /etc/localtime \
   && dpkg-reconfigure -f noninteractive tzdata \
-  && locale-gen "en_US.UTF-8" \
+  && echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen \
+  && locale-gen \
   && dpkg-reconfigure --frontend=noninteractive locales
 
 ENV LANG en_US.UTF-8
-ENV LC_ALL en_US.UTF-8
 ENV BUNDLE_SILENCE_ROOT_WARNING 1
 
 # https://github.com/bundler/bundler/issues/4402
@@ -71,6 +72,12 @@ RUN set -ex; \
   rm -rf /tmp/libxl-$LIBXL_VERSION.tar.gz /tmp/libxl-$LIBXL_VERSION;
 
 ADD excel2csv /usr/bin
+
+RUN mkdir /root/.ssh && \
+  echo 'Host sphinx\n\
+StrictHostKeyChecking no\n\
+UserKnownHostsFile=/dev/null\n'\
+>> /root/.ssh/config
 
 ENTRYPOINT ["/tini", "--"]
 

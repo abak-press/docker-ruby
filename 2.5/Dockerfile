@@ -30,15 +30,16 @@ RUN apt-get update -qq \
   && truncate -s 0 /var/log/*log
 
 RUN curl -fsSL https://deb.nodesource.com/setup_14.x | bash - ;\
-  apt-get install -y nodejs;
+  apt-get install -y nodejs \
+  && npm install -g yarn
 
-RUN echo "Asia/Yekaterinburg" > /etc/timezone \
+RUN ln -sf /usr/share/zoneinfo/Asia/Yekaterinburg /etc/localtime \
   && dpkg-reconfigure -f noninteractive tzdata \
-  && locale-gen "en_US.UTF-8" \
+  && echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen \
+  && locale-gen \
   && dpkg-reconfigure --frontend=noninteractive locales
 
 ENV LANG en_US.UTF-8
-ENV LC_ALL en_US.UTF-8
 ENV BUNDLE_SILENCE_ROOT_WARNING 1
 
 RUN echo 'gem: --no-rdoc --no-ri --no-document' > /root/.gemrc \
