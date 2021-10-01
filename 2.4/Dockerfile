@@ -1,5 +1,8 @@
 FROM ruby:2.4.10-stretch
 
+RUN sed -i 's/mozilla\/DST_Root_CA_X3\.crt/!mozilla\/DST_Root_CA_X3.crt/' /etc/ca-certificates.conf \
+  && update-ca-certificates
+
 RUN curl -L https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
   && echo "deb http://apt.postgresql.org/pub/repos/apt stretch-pgdg main 9.6" > /etc/apt/sources.list.d/pgdg.list \
   && apt-get update -qq \
@@ -26,7 +29,6 @@ RUN curl -L https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
     libsqlite3-dev \
     catdoc \
     enca \
-    ca-certificates \
     default-libmysqlclient-dev \
     build-essential \
     vim \
