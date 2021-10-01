@@ -1,5 +1,8 @@
 FROM ruby:2.2.7-jessie
 
+RUN sed -i 's/mozilla\/DST_Root_CA_X3\.crt/!mozilla\/DST_Root_CA_X3.crt/' /etc/ca-certificates.conf \
+  && update-ca-certificates
+
 RUN apt-get update -qq \
   && DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends \
     locales \
@@ -22,7 +25,6 @@ RUN apt-get update -qq \
     libsqlite3-dev \
     catdoc \
     enca \
-    ca-certificates \
     apt-transport-https \
     libmysqlclient-dev \
     build-essential \
