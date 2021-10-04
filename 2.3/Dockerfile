@@ -68,6 +68,10 @@ RUN echo 'gem: --no-rdoc --no-ri --no-document' > /root/.gemrc \
   && bundle config git.allow_insecure true \
   && bundle config --global build.nokogiri --use-system-libraries
 
+RUN stat /usr/lib/x86_64-linux-gnu/ImageMagick-6.8.9/bin-Q16
+ENV PATH /usr/lib/x86_64-linux-gnu/ImageMagick-6.8.9/bin-Q16:$PATH
+RUN gem install rmagick -v 2.13.2
+
 RUN set -eux; \
   \
 echo "\
