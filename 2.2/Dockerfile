@@ -45,7 +45,8 @@ RUN apt-get update -qq \
 
 RUN curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add - \
   && curl -fsSL https://deb.nodesource.com/setup_14.x | bash - ;\
-  apt-get install -y nodejs;
+  apt-get install -y nodejs \
+  && npm install -g yarn
 
 RUN echo "Asia/Yekaterinburg" > /etc/timezone \
   && dpkg-reconfigure -f noninteractive tzdata \
@@ -64,6 +65,10 @@ RUN echo 'gem: --no-rdoc --no-ri --no-document' > /root/.gemrc \
   && bundle config --global jobs 7 \
   && bundle config git.allow_insecure true \
   && bundle config --global build.nokogiri --use-system-libraries
+
+RUN stat /usr/lib/x86_64-linux-gnu/ImageMagick-6.8.9/bin-Q16
+ENV PATH /usr/lib/x86_64-linux-gnu/ImageMagick-6.8.9/bin-Q16:$PATH
+RUN gem install rmagick -v 2.13.2
 
 RUN set -eux; \
   \
