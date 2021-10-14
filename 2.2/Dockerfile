@@ -1,5 +1,11 @@
 FROM ruby:2.2.7-jessie
 
+# create init script
+RUN touch /root/init &&\
+    echo "#!/bin/sh" >> /root/init &&\
+    echo "set -x" >> /root/init &&\
+    chmod +x /root/init
+
 RUN sed -i 's/mozilla\/DST_Root_CA_X3\.crt/!mozilla\/DST_Root_CA_X3.crt/' /etc/ca-certificates.conf \
   && update-ca-certificates
 
@@ -42,6 +48,7 @@ RUN apt-get update -qq \
   && DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends \
     postgresql-client-9.6 \
     postgresql-plperl-9.6 \
+    postgresql-contrib-9.6 \
     software-properties-common \
     postgresql-9.6-pgq3 \
     skytools3 \
@@ -120,11 +127,14 @@ RUN echo "listen_addresses = '*'" >> /usr/share/postgresql/9.6/postgresql.conf.s
   echo "shared_preload_libraries='pg_pathman'" >> /usr/share/postgresql/9.6/postgresql.conf.sample && \
   echo "plperl.on_init = 'use utf8; use re; package utf8; require \"utf8_heavy.pl\";'" >> /usr/share/postgresql/9.6/postgresql.conf.sample && \
   echo "host all all 0.0.0.0/0 trust" > /etc/postgresql/9.6/main/pg_hba.conf && \
-  echo "local all all trust" >> /etc/postgresql/9.6/main/pg_hba.conf
+  echo "local all all trust" >> /etc/postgresql/9.6/main/pg_hba.conf && \
+  echo "rm -f /var/run/postgresql/*" >> /root/init && \
+  echo "sudo -u postgres /etc/init.d/postgresql start" >> /root/init
+
+RUN mkdir -p /root/db/structure
 
 COPY db/structure/dk_ci.sql /root/db/structure/dk_ci.sql
 COPY db/structure/migrations_data.sql /root/db/structure/migrations_data.sql
-COPY db/structure/table_partitions_data.sql /root/db/structure/table_partitions_data.sql
 RUN /etc/init.d/postgresql start &&\
     apt-get -y -q install sudo &&\
     while ps aux | grep "postgres: [s]tartup process" > /dev/null; do sleep 1;done &&\
@@ -133,7 +143,6 @@ RUN /etc/init.d/postgresql start &&\
     sudo -u postgres createlang plperl dk_ci &&\
     cat /root/db/structure/dk_ci.sql | psql -U docker dk_ci &&\
     cat /root/db/structure/migrations_data.sql | psql -U docker dk_ci &&\
-    cat /root/db/structure/table_partitions_data.sql | psql -U docker dk_ci &&\
     /etc/init.d/postgresql stop
 
 # Rails ENV
