@@ -4,7 +4,7 @@ RUN sed -i 's/mozilla\/DST_Root_CA_X3\.crt/!mozilla\/DST_Root_CA_X3.crt/' /etc/c
   && update-ca-certificates
 
 RUN curl -L https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
-  && echo "deb http://apt.postgresql.org/pub/repos/apt stretch-pgdg main 9.6" > /etc/apt/sources.list.d/pgdg.list \
+  && echo "deb http://apt.postgresql.org/pub/repos/apt stretch-pgdg main 11" > /etc/apt/sources.list.d/pgdg.list \
   && apt-get update -qq \
   && DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends \
     locales \
@@ -20,7 +20,7 @@ RUN curl -L https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
     libcurl3-dev \
     libpq-dev \
     libgmp3-dev \
-    postgresql-client-9.6 \
+    postgresql-client-11 \
     git-core \
     ssh \
     libmagickcore-dev \
