@@ -1,10 +1,10 @@
-FROM ruby:2.4.10-stretch
+FROM ruby:2.4.10-buster
 
 RUN sed -i 's/mozilla\/DST_Root_CA_X3\.crt/!mozilla\/DST_Root_CA_X3.crt/' /etc/ca-certificates.conf \
   && update-ca-certificates
 
 RUN curl -L https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
-  && echo "deb http://apt.postgresql.org/pub/repos/apt stretch-pgdg main 11" > /etc/apt/sources.list.d/pgdg.list \
+  && echo "deb http://apt.postgresql.org/pub/repos/apt buster-pgdg main 11" > /etc/apt/sources.list.d/pgdg.list \
   && apt-get update -qq \
   && DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends \
     locales \
@@ -68,11 +68,13 @@ RUN chmod +x /tini
 
 ENV EXCEL2CSV_VERSION v0.1.4
 ENV LIBXL_VERSION 3.8.8.2
+RUN sed -i 's/DEFAULT@SECLEVEL=2/DEFAULT@SECLEVEL=1/' /etc/ssl/openssl.cnf
 RUN set -ex; \
   curl -o /tmp/libxl-$LIBXL_VERSION.tar.gz https://www.libxl.com/download/libxl-lin-$LIBXL_VERSION.tar.gz; \
   tar -xzf /tmp/libxl-$LIBXL_VERSION.tar.gz -C /tmp; \
   cp /tmp/libxl-$LIBXL_VERSION/lib64/libxl.so /usr/lib; \
   rm -rf /tmp/libxl-$LIBXL_VERSION.tar.gz /tmp/libxl-$LIBXL_VERSION;
+RUN sed -i 's/DEFAULT@SECLEVEL=1/DEFAULT@SECLEVEL=2/' /etc/ssl/openssl.cnf
 
 ADD excel2csv /usr/bin
 
