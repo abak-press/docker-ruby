@@ -34,10 +34,10 @@ RUN apt-get update -qq \
     dirmngr \
     netcat \
   && curl -L https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
-  && echo "deb https://apt-archive.postgresql.org/pub/repos/apt jessie-pgdg main 9.6" > /etc/apt/sources.list.d/pgdg.list \
+  && echo "deb https://apt-archive.postgresql.org/pub/repos/apt jessie-pgdg main 11" > /etc/apt/sources.list.d/pgdg.list \
   && apt-get update -qq \
   && DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends \
-    postgresql-client-9.6 \
+    postgresql-client-11 \
     libpq-dev \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
