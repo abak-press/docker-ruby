@@ -86,5 +86,5 @@ UserKnownHostsFile=/dev/null\n'\
 
 ENTRYPOINT ["/tini", "--"]
 
-RUN git config --global --add safe.directory /app
+RUN git config --global --add safe.directory "*"
 WORKDIR /app
