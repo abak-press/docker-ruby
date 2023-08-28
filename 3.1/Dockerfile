@@ -31,7 +31,7 @@ RUN apt-get update -qq \
   && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
   && truncate -s 0 /var/log/*log
 
-RUN curl -fsSL https://deb.nodesource.com/setup_14.x | bash - ;\
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - ;\
   apt-get install -y nodejs \
   && npm install -g yarn
 
