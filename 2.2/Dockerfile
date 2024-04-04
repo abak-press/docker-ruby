@@ -52,15 +52,14 @@ RUN apt-get update -qq \
   && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
   && truncate -s 0 /var/log/*log
 
-ENV NVM_DIR /root/.nvm
-RUN mkdir $NVM_DIR
+ENV NODE_VERSION=14.21.3
+ENV NVM_DIR=/root/.nvm
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-
-RUN [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" \
-    && nvm install 14 \
-    && nvm alias default 14 \
-    && nvm use default \
-    && npm install -g yarn
+RUN . "$NVM_DIR/nvm.sh" && nvm install ${NODE_VERSION}
+RUN . "$NVM_DIR/nvm.sh" && nvm use v${NODE_VERSION}
+RUN . "$NVM_DIR/nvm.sh" && nvm alias default v${NODE_VERSION}
+ENV PATH="/root/.nvm/versions/node/v${NODE_VERSION}/bin/:${PATH}"
+RUN npm install -g yarn
 
 RUN echo "Asia/Yekaterinburg" > /etc/timezone \
   && dpkg-reconfigure -f noninteractive tzdata \
