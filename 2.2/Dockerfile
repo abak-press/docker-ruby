@@ -3,8 +3,17 @@ FROM ruby:2.2.7-jessie
 RUN sed -i 's/mozilla\/DST_Root_CA_X3\.crt/!mozilla\/DST_Root_CA_X3.crt/' /etc/ca-certificates.conf \
   && update-ca-certificates
 
+RUN rm /etc/apt/sources.list
+RUN echo "Acquire::Check-Valid-Until no;" > /etc/apt/apt.conf.d/99-no-check-valid-until
+RUN echo "deb http://archive.debian.org/debian jessie main" >> /etc/apt/sources.list.d/jessie_main.list
+RUN echo "deb-src http://archive.debian.org/debian/ jessie main" >> /etc/apt/sources.list.d/jessie_main.list
+RUN echo "deb http://archive.debian.org/debian jessie contrib" >> /etc/apt/sources.list.d/jessie_contrib.list
+RUN echo "deb-src http://archive.debian.org/debian/ jessie contrib" >> /etc/apt/sources.list.d/jessie_contrib.list
+RUN echo "deb http://archive.debian.org/debian jessie non-free" >> /etc/apt/sources.list.d/jessie_non_free.list
+RUN echo "deb-src http://archive.debian.org/debian/ jessie non-free" >> /etc/apt/sources.list.d/jessie_non_free.list
+
 RUN apt-get update -qq \
-  && DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends \
+  && DEBIAN_FRONTEND=noninteractive apt-get install -yq --force-yes --no-install-recommends \
     locales \
     make \
     gcc \
@@ -36,25 +45,30 @@ RUN apt-get update -qq \
   && curl -L https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
   && echo "deb https://apt-archive.postgresql.org/pub/repos/apt jessie-pgdg main 11" > /etc/apt/sources.list.d/pgdg.list \
   && apt-get update -qq \
-  && DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends \
+  && DEBIAN_FRONTEND=noninteractive apt-get install -yq --force-yes --no-install-recommends \
     postgresql-client-11 \
     libpq-dev \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
   && truncate -s 0 /var/log/*log
 
-RUN curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add - \
-  && curl -fsSL https://deb.nodesource.com/setup_14.x | bash - ;\
-  apt-get install -y nodejs \
-  && npm install -g yarn
+ENV NVM_DIR /root/.nvm
+RUN mkdir $NVM_DIR
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+
+RUN [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" \
+    && nvm install 14 \
+    && nvm alias default 14 \
+    && nvm use default \
+    && npm install -g yarn
 
 RUN echo "Asia/Yekaterinburg" > /etc/timezone \
   && dpkg-reconfigure -f noninteractive tzdata \
-  && locale-gen "en_US.UTF-8" \
+  && echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen \
+  && locale-gen \
   && dpkg-reconfigure --frontend=noninteractive locales
 
 ENV LANG en_US.UTF-8
-ENV LC_ALL en_US.UTF-8
 ENV BUNDLE_SILENCE_ROOT_WARNING 1
 
 # https://github.com/bundler/bundler/issues/4402
