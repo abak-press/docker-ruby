@@ -1,11 +1,14 @@
 FROM ruby:2.4.10-buster
 
+RUN sed -i 's|deb.debian.org/debian|archive.debian.org/debian|g' /etc/apt/sources.list && \
+    sed -i 's|security.debian.org/debian-security|archive.debian.org/debian-security|g' /etc/apt/sources.list && \
+    echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99ignore-release-date && \
+    apt-get update -qq
+
 RUN sed -i 's/mozilla\/DST_Root_CA_X3\.crt/!mozilla\/DST_Root_CA_X3.crt/' /etc/ca-certificates.conf \
   && update-ca-certificates
 
-RUN curl -L https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
-  && echo "deb http://apt.postgresql.org/pub/repos/apt buster-pgdg main 11" > /etc/apt/sources.list.d/pgdg.list \
-  && apt-get update -qq \
+RUN apt-get update -qq \
   && DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends \
     locales \
     make \
@@ -87,4 +90,10 @@ UserKnownHostsFile=/dev/null\n'\
 ENTRYPOINT ["/tini", "--"]
 
 RUN git config --global --add safe.directory "*"
+RUN apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends \
+  dnsutils \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
+  && truncate -s 0 /var/log/*log
+
 WORKDIR /app
